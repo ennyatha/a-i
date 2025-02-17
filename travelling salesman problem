@@ -1,0 +1,67 @@
+import itertools
+
+
+# Function to take input for the distance matrix
+def input_distances():
+    cities_count = int(input("Enter the number of cities: "))
+    cities = []
+    distances = {}
+
+    # Get city names
+    for i in range(cities_count):
+        city = input(f"Enter name of city {i + 1}: ")
+        cities.append(city)
+        distances[city] = {}
+
+    # Get distances between cities
+    for i in range(cities_count):
+        for j in range(i + 1, cities_count):
+            dist = float(input(f"Enter the distance between {cities[i]} and {cities[j]}: "))
+            distances[cities[i]][cities[j]] = dist
+            distances[cities[j]][cities[i]] = dist  # Since the distance is symmetric
+
+    return cities, distances
+
+
+# Function to calculate the total distance of a given route
+def calculate_route_distance(route, distances):
+    total_distance = 0
+    for i in range(len(route) - 1):
+        total_distance += distances[route[i]][route[i + 1]]
+    total_distance += distances[route[-1]][route[0]]  # return to the starting city
+    return total_distance
+
+
+# Function to solve TSP using brute force
+def tsp_brute_force(distances):
+    cities = list(distances.keys())  # List of all cities
+    all_routes = itertools.permutations(cities)  # Generate all permutations of cities
+    min_distance = float('inf')  # Initialize with a very large number
+    best_route = None  # Store the best route
+
+    # Check each route
+    for route in all_routes:
+        current_distance = calculate_route_distance(route, distances)
+        if current_distance < min_distance:
+            min_distance = current_distance
+            best_route = route
+
+    return best_route, min_distance
+
+
+# Main function to handle user input and solve the TSP
+def main():
+    print("Welcome to the Travelling Salesman Problem Solver!")
+
+    # Get distances from user input
+    cities, distances = input_distances()
+
+    # Solve the TSP
+    best_route, min_distance = tsp_brute_force(distances)
+
+    print(f"\nThe optimal route is: {best_route}")
+    print(f"The minimum distance is: {min_distance}")
+
+
+if __name__ == "__main__":
+    main()
